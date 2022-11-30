@@ -61,29 +61,166 @@ public class GameManager : MonoBehaviour
         bool gameComplete = false;
 
         // TODO: Need to add functionality to detect if there is 4 of the same color chip along the
-            // - Horizontal
-            // - Vertical
+            // - Horizontal - DONE
+            // - Vertical - 
             // - Diagonal
+
+        //bool hCheck = CheckHorizontal();
+        //bool vCheck = CheckVertical();
+        bool result = CheckWin(board);
+        Debug.Log(result);
+       
+    }
+
+    private bool CheckWin(int[,] matrix) 
+    {   
+        /* This method checks if there are four identical elements in a matrix either
+     horizontally, vertically, or diagonally */
+
+        /* We traverse each element in the matrix */
+        for( int row = 0; row < 5; row++ )
+        {
+            for( int col = 0; col < 6; col++ )
+            {
+
+                // This is the current element in our matrix
+                int element = matrix[row,col];
+
+                if (element != 0) 
+                {
+                    /* If there are 3 elements remaining to the right of the current element's
+                    position and the current element equals each of them, then return true */
+                    if( col <= 6-4 && element == matrix[row,col+1] && element == matrix[row,col+2] && element == matrix[row,col+3] )
+                    return true;
+
+                    /* If there are 3 elements remaining below the current element's position
+                    and the current element equals each of them, then return true */
+                    if( row <= 5 - 4 && element == matrix[row+1,col] && element == matrix[row+2,col] && element == matrix[row+3,col] )
+                    {
+                        return true;
+                    }
+
+
+                    /* If we are in a position in the matrix such that there are diagonals
+                    remaining to the bottom right of the current element, then we check */
+                    if( row <= 5-4 && col <= 6-4 )
+                    {
+                    // If the current element equals each element diagonally to the bottom right
+                    if( element == matrix[row+1,col+1] && element == matrix[row+2,col+2] && element == matrix[row+3,col+3] )
+                        return true;
+                    }
+
+
+                    /* If we are in a position in the matrix such that there are diagonals
+                    remaining to the bottom left of the current element, then we check */
+                    if( row <= 5-4 && col >= 6-4 )
+                    {
+                    // If the current element equals each element diagonally to the bottom left
+                    if( element == matrix[row+1,col-1] && element == matrix[row+2,col-2] && element == matrix[row+3,col-3] )
+                        return true;
+                    }
+                }
+
+                
+
+            }
+        }
+
+        /* If all the previous return statements failed, then we found no such
+        patterns of four identical elements in this matrix, so we return false */
+        return false;
+    }
+    
+
+    private bool CheckVertical() 
+    {
+        int columnPrevious = -1;
+        int columnCount = 0;
+
+        int i = 0;
+        int j = 0;
+        while (i < 6) 
+        {
+            j = 0; 
+            columnPrevious = -1;
+            while (j < 5) 
+            {
+                if (columnPrevious == -1) {
+                    columnPrevious = board[i,j];
+                    if (columnPrevious != 0) {
+                        columnCount++;
+                    }
+                }
+
+                else {
+                    if (board[i,j] == columnPrevious && columnPrevious != 0) {
+                        columnCount++;
+                        if (columnCount == 4) {
+                            Debug.Log("Match Found along Vertical");
+                            return true;
+                        }
+                    } else {
+                        columnCount = 0;
+                    }
+                }
+
+                j++;
+            }
+            i++;
+        }  
+
+        return false;      
+    }
+
+    private bool CheckHorizontal() 
+    {
+        int rowPrevious = -1;
+        int rowCount = 0;
 
         int i = 0; 
         int j = 0;
         string output = "Board State";
-        while (i < 5) 
-        {   
+        while (i < 5) // Column (Up-Down Check)
+        {           
             j = 0;
             output += "\n";
 
-            while (j < 6) 
+            Debug.Log("New line");
+
+            rowPrevious = -1;
+            while (j < 6) // Row (Left-Right Check)
             {
                 output += "[" + board[j,i] + "] ";
+                
+                // If this is the first column of the row, set previous to whatever it is.
+                if (rowPrevious == -1) {
+                    rowPrevious = board[j,i];
+                    if (rowPrevious != 0) {
+                        rowCount++;
+                    }
+                }
 
+                else 
+                {
+                    if (board[j,i] == rowPrevious && rowPrevious != 0) {
+                        rowCount++;
+                        if (rowCount == 4) {
+                            Debug.Log("Match Found along horizontal");
+                            return true;
+                        }
+                    } else {
+                        rowCount = 0;
+                    }
+                }
+
+                Debug.Log("Board["+j+","+i+"]");
                 j++;
             }
 
             i++;
         }
- 
-        Debug.Log(output);
+
+        return false;
     }
 
     public void LoadChip(int index)
