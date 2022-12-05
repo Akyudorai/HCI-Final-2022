@@ -6,10 +6,17 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 
+// DEBUGGING
+using UnityEngine.UI;
+using TMPro;
+
 public class CommandInvoker : MonoBehaviour
 {
     public static DictationRecognizer DR;
     public SpeechSystemStatus status;
+
+    [Header("Debugging")]
+    public TMP_Text inputDisplay = null;
 
     void Start() 
     {
@@ -25,7 +32,9 @@ public class CommandInvoker : MonoBehaviour
     }
 
     private void onDictationResult(string text, ConfidenceLevel confidence) {
-        Debug.Log("DR Result: " + text);
+        
+        StartCoroutine(ShowDictationResult(text));
+
         string[] resultArr = text.Split(' ');
         int keywordOrder = 0;
         string prevKeyword = "";
@@ -36,6 +45,16 @@ public class CommandInvoker : MonoBehaviour
                 prevKeyword = resultArr[i];
             }
         }
+    }
+
+    private IEnumerator ShowDictationResult(string text) 
+    {
+        inputDisplay.enabled = true;
+        inputDisplay.text = text;
+        yield return new WaitForSeconds(3.0f);
+        inputDisplay.text = "";
+        inputDisplay.enabled = false;
+        
     }
 
     private void onDictationHypothesis(string text) {
