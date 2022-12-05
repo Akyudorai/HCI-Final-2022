@@ -161,7 +161,7 @@ public class GameManager : MonoBehaviour
         if (playerChip == null) {
             playerChip = GameObject.Instantiate(chipPrefab, columnStartPos[index-1].position, Quaternion.identity);    
             playerChip.GetComponent<Rigidbody2D>().gravityScale = 0;     
-            playerChip.GetComponent<SpriteRenderer>().color = (currentPlayer == 1) ? Color.blue : Color.red;   
+            playerChip.GetComponent<SpriteRenderer>().color = (currentPlayer == 1) ? Color.yellow : Color.red;   
         } else {
             playerChip.transform.position = columnStartPos[index-1].position;
         }
